@@ -252,7 +252,16 @@ window.search = window.search || {};
         search_options = config.search_options;
         searchbar_outer = config.searchbar_outer;
         doc_urls = config.doc_urls;
-        searchindex = elasticlunr.Index.load(config.index);
+        searchindex = elasticlunr(function(){
+            this.use(elasticlunr.jp)
+            config.index.fields.forEach(f => {
+                this.addField(f)
+            });
+            this.setRef('id');
+        });
+        Object.keys(config.index.documentStore.docs).forEach(key => {
+            searchindex.addDoc(config.index.documentStore.docs[key])
+        });
 
         // Set up events
         searchicon.addEventListener('click', function(e) { searchIconClickHandler(); }, false);
