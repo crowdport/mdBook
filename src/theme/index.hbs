@@ -280,10 +280,13 @@
         {{/if}}
 
         {{#if search_js}}
-        // elasticlunr-ja.js を使用して日本語で検索できるようにする
-        // elasticlunr-ja.js は以前Fundsに居た方が用意してくれた下記のものを使っているが、どのようなものなのかは詳細不明
-        // https://github.com/tae124/elasticlunr-ja
-        // <script src="{{ path_to_root }}elasticlunr.min.js"></script>
+        {{!--
+           elasticlunr-ja.js を使用して日本語で検索できるようにする
+           elasticlunr-ja.js は以前Fundsに居た方が用意してくれた下記のものを使っているが、どのようなものなのかは詳細不明
+           https://github.com/tae124/elasticlunr-ja
+           ↓ 元の実装
+           <script src="{{ path_to_root }}elasticlunr.min.js"></script>
+        --}}
         <script src="{{ path_to_root }}elasticlunr-ja.js"></script>
         <script src="{{ path_to_root }}mark.min.js"></script>
         <script src="{{ path_to_root }}searcher.js"></script>
