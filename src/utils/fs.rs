@@ -1,10 +1,11 @@
 use crate::errors::*;
+use log::{debug, trace};
 use std::convert::Into;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Component, Path, PathBuf};
 
-/// Naively replaces any path seperator with a forward-slash '/'
+/// Naively replaces any path separator with a forward-slash '/'
 pub fn normalize_path(path: &str) -> String {
     use std::path::is_separator;
     path.chars()
@@ -37,7 +38,6 @@ pub fn write_file<P: AsRef<Path>>(build_dir: &Path, filename: P, content: &[u8])
 /// Consider [submitting a new issue](https://github.com/rust-lang/mdBook/issues)
 /// or a [pull-request](https://github.com/rust-lang/mdBook/pulls) to improve it.
 pub fn path_to_root<P: Into<PathBuf>>(path: P) -> String {
-    debug!("path_to_root");
     // Remove filename and add "../" for every directory
 
     path.into()
@@ -210,65 +210,62 @@ mod tests {
         };
 
         // Create a couple of files
-        if let Err(err) = fs::File::create(&tmp.path().join("file.txt")) {
+        if let Err(err) = fs::File::create(tmp.path().join("file.txt")) {
             panic!("Could not create file.txt: {}", err);
         }
-        if let Err(err) = fs::File::create(&tmp.path().join("file.md")) {
+        if let Err(err) = fs::File::create(tmp.path().join("file.md")) {
             panic!("Could not create file.md: {}", err);
         }
-        if let Err(err) = fs::File::create(&tmp.path().join("file.png")) {
+        if let Err(err) = fs::File::create(tmp.path().join("file.png")) {
             panic!("Could not create file.png: {}", err);
         }
-        if let Err(err) = fs::create_dir(&tmp.path().join("sub_dir")) {
+        if let Err(err) = fs::create_dir(tmp.path().join("sub_dir")) {
             panic!("Could not create sub_dir: {}", err);
         }
-        if let Err(err) = fs::File::create(&tmp.path().join("sub_dir/file.png")) {
+        if let Err(err) = fs::File::create(tmp.path().join("sub_dir/file.png")) {
             panic!("Could not create sub_dir/file.png: {}", err);
         }
-        if let Err(err) = fs::create_dir(&tmp.path().join("sub_dir_exists")) {
+        if let Err(err) = fs::create_dir(tmp.path().join("sub_dir_exists")) {
             panic!("Could not create sub_dir_exists: {}", err);
         }
-        if let Err(err) = fs::File::create(&tmp.path().join("sub_dir_exists/file.txt")) {
+        if let Err(err) = fs::File::create(tmp.path().join("sub_dir_exists/file.txt")) {
             panic!("Could not create sub_dir_exists/file.txt: {}", err);
         }
-        if let Err(err) = symlink(
-            &tmp.path().join("file.png"),
-            &tmp.path().join("symlink.png"),
-        ) {
+        if let Err(err) = symlink(tmp.path().join("file.png"), tmp.path().join("symlink.png")) {
             panic!("Could not symlink file.png: {}", err);
         }
 
         // Create output dir
-        if let Err(err) = fs::create_dir(&tmp.path().join("output")) {
+        if let Err(err) = fs::create_dir(tmp.path().join("output")) {
             panic!("Could not create output: {}", err);
         }
-        if let Err(err) = fs::create_dir(&tmp.path().join("output/sub_dir_exists")) {
+        if let Err(err) = fs::create_dir(tmp.path().join("output/sub_dir_exists")) {
             panic!("Could not create output/sub_dir_exists: {}", err);
         }
 
         if let Err(e) =
-            copy_files_except_ext(&tmp.path(), &tmp.path().join("output"), true, None, &["md"])
+            copy_files_except_ext(tmp.path(), &tmp.path().join("output"), true, None, &["md"])
         {
             panic!("Error while executing the function:\n{:?}", e);
         }
 
         // Check if the correct files where created
-        if !(&tmp.path().join("output/file.txt")).exists() {
+        if !tmp.path().join("output/file.txt").exists() {
             panic!("output/file.txt should exist")
         }
-        if (&tmp.path().join("output/file.md")).exists() {
+        if tmp.path().join("output/file.md").exists() {
             panic!("output/file.md should not exist")
         }
-        if !(&tmp.path().join("output/file.png")).exists() {
+        if !tmp.path().join("output/file.png").exists() {
             panic!("output/file.png should exist")
         }
-        if !(&tmp.path().join("output/sub_dir/file.png")).exists() {
+        if !tmp.path().join("output/sub_dir/file.png").exists() {
             panic!("output/sub_dir/file.png should exist")
         }
-        if !(&tmp.path().join("output/sub_dir_exists/file.txt")).exists() {
+        if !tmp.path().join("output/sub_dir_exists/file.txt").exists() {
             panic!("output/sub_dir/file.png should exist")
         }
-        if !(&tmp.path().join("output/symlink.png")).exists() {
+        if !tmp.path().join("output/symlink.png").exists() {
             panic!("output/symlink.png should exist")
         }
     }
